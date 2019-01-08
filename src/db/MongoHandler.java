@@ -16,12 +16,14 @@ import com.mongodb.Block;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+
 
 import books.representation.Author;
 import books.representation.Book;
@@ -127,9 +129,16 @@ public class MongoHandler implements DBHandler {
 	public void AddBook(Book b) throws SQLException {
 		// TODO Auto-generated method stub
 
-		MongoCollection<Document> dbBooks = db.getCollection("Books");
-		dbBooks.insertOne(AsDocument(b));
+		//!!!!!!
+		//Unable to deploy replica sets to use transactions for ClientSessions.
+		//!!!!!!
 		
+		
+		MongoCollection<Document> dbBooks = db.getCollection("Books");
+		//ClientSession session = mongo.startSession();
+		//session.startTransaction();
+		dbBooks.insertOne(AsDocument(b));
+		//session.commitTransaction();
 		
 	}
 
@@ -137,6 +146,9 @@ public class MongoHandler implements DBHandler {
 	public void AddReview(Review r) throws SQLException {
 		// TODO Auto-generated method stub
 
+		MongoCollection<Document> dbReviews = db.getCollection("Reviews");
+		dbReviews.insertOne(AsDocument(r));
+		
 	}
 	
 
@@ -205,8 +217,8 @@ public class MongoHandler implements DBHandler {
 	private Book docToBook(Document d) {
 		Book b = new Book();
 		
-		b.setTitle(d.getString("title"));
 		b.setIsbn(d.getString("isbn"));
+		b.setTitle(d.getString("title"));
 		b.setRelease(d.getString("date"));
 
 		@SuppressWarnings("unchecked")
@@ -236,19 +248,39 @@ public class MongoHandler implements DBHandler {
 	}
 	
 	private Review docToReview(Document d) {
-		//ISBN
-		
-		//Score
+		Review r = new Review();
+		r.setISBN(d.getString("isbn"));
+		r.setScore(d.getInteger("score", -1));
+		r.setMessage(d.getString("message"));
 		
 		//Message
 		
-		return null;
+		return r;
 	}
 
 	@Override
-	public ArrayList<Review> getReviewsfromIsbn(String name) throws SQLException {
+	public ArrayList<Review> getReviewsfromIsbn(String isbn) throws SQLException {
 		// TODO Auto-generated method stub
-		return null;
+		
+		MongoCollection<Document> reviews = db.getCollection("Reviews");
+
+		
+		Bson filter = Filters.eq("isbn", isbn);
+		
+		ArrayList<Document> result = reviews.find(filter).into(new ArrayList<>());
+		ArrayList<Review> reviewResult = new ArrayList<>();
+		
+		System.out.println("Books matching id:" + result);
+		
+		for (Document doc : result) {
+			reviewResult.add(docToReview(doc));
+		}
+		
+		for (Review re : reviewResult) {
+			System.out.println("Found: " + re);
+		}
+		
+		return reviewResult;
 	}
 	
 }

@@ -147,10 +147,11 @@ public class SQLHandler implements DBHandler {
 		String ReleaseYr = "";
 		
 		do{
-			Title = set.getString(1);
-			Isbn = set.getString(2);
+			
+			Isbn = set.getString(1);
+			Title = set.getString(2);
 			ReleaseYr = set.getString(3);
-			Book newBook = new Book(Title, Isbn, ReleaseYr, new ArrayList<String>(), new ArrayList<Author>());
+			Book newBook = new Book(Isbn, ReleaseYr, Title, new ArrayList<String>(), new ArrayList<Author>());
 			result.add(newBook);
 			
 		}while(set.next());
@@ -175,6 +176,7 @@ public class SQLHandler implements DBHandler {
 		return result;
 	}
 	private ArrayList<String> getGenresFromSet(ResultSet set) throws SQLException{
+
 		ArrayList<String> result = new ArrayList<>();
 		
 		if(!set.first()) return result;
@@ -189,6 +191,26 @@ public class SQLHandler implements DBHandler {
 		return result;
 	}
 
+	private ArrayList<Review> getReviewsFromSet(ResultSet set) throws SQLException{
+		ArrayList<Review> result = new ArrayList<>();
+		
+		if(!set.first()) return result;
+		
+		String isbn = "";
+		int score;
+		String message = "";
+		do{
+			isbn = set.getString(1);
+			score = set.getInt(2);
+			message = set.getString(3);
+			
+			result.add(new Review(isbn, message, score));
+			
+		}while(set.next());
+		
+		return result;
+	}
+	
 	@Override
 	public void AddBook(Book b) throws SQLException {
 		// TODO Auto-generated method stub
@@ -271,12 +293,17 @@ public class SQLHandler implements DBHandler {
 	}
 
 	@Override
-	public ArrayList<Review> getReviewsfromIsbn(String name) throws SQLException {
+	public ArrayList<Review> getReviewsfromIsbn(String isbn) throws SQLException {
 		// TODO Auto-generated method stub
 		
+
+		PreparedStatement query = conn.prepareStatement("select * from T_Review where isbn = ?;");
+		query.setString(1, isbn);
 		
+		ResultSet queryResult = query.executeQuery();
+		ArrayList<Review> reviews = this.getReviewsFromSet(queryResult);
 		
-		return null;
+		return reviews;
 	}
 	
 

@@ -127,7 +127,7 @@ public class PageView extends VBox{
 			}
         });
         MenuItem reviewItem = new MenuItem("Review");
-        authorItem.setOnAction(new EventHandler<ActionEvent>() {
+        reviewItem.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				control.onViewReviews(Popup.IsbnSearch());
@@ -163,6 +163,11 @@ public class PageView extends VBox{
 		if(displayBooks == null) {
 			return;
 		}
+		
+		for(Book b : displayBooks) {
+			System.out.println("Book: " + b);
+		}
+		
 		booksInTable.clear();
 		booksInTable.addAll(displayBooks);
 		
@@ -183,11 +188,11 @@ public class PageView extends VBox{
 	
 	private void initViewTable() {
 		
-		viewTable = new TableView<>();
+		viewTable = new TableView<Book>();
         viewTable.setEditable(false); // don't allow user updates (yet)
         
-        TableColumn<Book, String> titleCol = new TableColumn<>("Title");
         TableColumn<Book, String> isbnCol = new TableColumn<>("ISBN");
+        TableColumn<Book, String> titleCol = new TableColumn<>("Title");
         TableColumn<Book, String> publishedCol = new TableColumn<>("Published");
         
         TableColumn<Book, String> authorCol = new TableColumn<>("Authors");
@@ -195,9 +200,9 @@ public class PageView extends VBox{
 
         viewTable.getColumns().addAll(titleCol, isbnCol, publishedCol, authorCol, genreCol);
         
+        titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
         isbnCol.setCellValueFactory(new PropertyValueFactory<>("isbn"));
-        publishedCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleCol.setCellValueFactory(new PropertyValueFactory<>("release"));
+        publishedCol.setCellValueFactory(new PropertyValueFactory<>("release"));
         authorCol.setCellValueFactory(new PropertyValueFactory<>("authors"));
         genreCol.setCellValueFactory(new PropertyValueFactory<>("genres"));
         

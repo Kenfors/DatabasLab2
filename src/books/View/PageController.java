@@ -19,25 +19,47 @@ public class PageController {
     private DBHandler db; // model
     
 
+    /*Constructor
+     * Connects the database
+     * 
+     * @param database interface for database
+     * @param gui the view-class for
+     * */
     public PageController(DBHandler database, PageView gui) {
     	db = database;
     	view = gui;
     	db.connect("client", "123");
     }
     
+    /*CloseDb
+     * Closes the database
+     * 
+     * 
+     * */
     public void closeDB() {
     	db.disconnect();
     }
     
-    public void setModel(DBHandler currentModel) {	
-    	this.db = currentModel;
-    	
-    }
+    /* setModel
+     * Deprecated?
+     * 
+     * @param currentModel
+     * */
+    
+
     public void setView(PageView currentView) {	
     	this.view = currentView;
     	
     }
     
+    
+    /* 
+     * Link between model and view
+     * for selecting "search"
+     * 
+     * @param isbn the searchstring representing isbn-number
+     * 
+     * */
     public void onSearchBookIsbn(String isbn) {
     	new Thread(new Runnable() {
 			@Override
@@ -66,7 +88,13 @@ public class PageController {
     		
     	}).start();
     }
-    
+    /* 
+     * Link between model and view
+     * for selecting "search"
+     * 
+     * @param title the searchstring representing title-number
+     * 
+     * */
     public void onSearchBookTitle(String title) {
     	new Thread(new Runnable() {
 			@Override
@@ -97,7 +125,13 @@ public class PageController {
     		
     	}).start();
     }
-    
+    /* 
+     * Link between model and view
+     * for selecting "search"
+     * 
+     * @param keyword the searchstring representing keyword-number
+     * 
+     * */
     public void onSearchAuthor(String keyword) {
     	new Thread(new Runnable() {
 			@Override
@@ -127,7 +161,13 @@ public class PageController {
     	}).start();
     }
     
-
+    /* 
+     * Link between model and view
+     * for selecting "view reviews"
+     * 
+     * @param isbn the searchstring representing isbn-number
+     * 
+     * */
     public void onViewReviews(String isbn) {
     	
     	new Thread(new Runnable() {
@@ -158,7 +198,13 @@ public class PageController {
     	}).start();
     	
     }
-	
+    /* 
+     * Link between model and view
+     * for selecting "Add Book"
+     * 
+     * @param bookToAdd the book-object to add
+     * 
+     * */
 	public void addBook(Book bookToAdd) {
 		
 		if(bookToAdd == null) {
@@ -186,7 +232,13 @@ public class PageController {
 			}	
 		}).start();
 	}
-	
+	/* 
+     * Link between model and view
+     * for selecting "Add Book"
+     * 
+     * @param r the review-object to add
+     * 
+     * */
 	public void addReview(Review r) {
 		if(r == null) {
     		view.showError("Input error");

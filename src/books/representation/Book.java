@@ -75,7 +75,9 @@ public class Book {
 		this.reviews = reviews;
 	}
 	
-	
+	public String toString() {
+		return "" + title + isbn + release + authors + genres;
+	}
 	
 	
 }

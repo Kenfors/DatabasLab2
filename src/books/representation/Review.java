@@ -5,6 +5,12 @@ public class Review{
 	private String message;
 	private int score;
 
+	public Review(String isbn, String msg, int scoreIn) {
+		setISBN(isbn);
+		setMessage(msg);
+		setScore(scoreIn);
+		
+	}
 	public Review(String msg, int scoreIn) {
 		setMessage(msg);
 		setScore(scoreIn);
